@@ -1,0 +1,46 @@
+# dependências
+node_modules/
+.pnp
+.pnp.js
+
+# build
+.next/
+out/
+build/
+dist/
+
+# ambiente — nunca comitar chave de Supabase
+# `.env*` pega TUDO (.env.production, .env.staging, .env.qualquer-coisa).
+# O padrão anterior era `.env` + `.env*.local`, que deixava
+# `.env.production` passar. A exceção abaixo é o único arquivo de
+# ambiente versionável, e ele não contém valor nenhum.
+.env*
+!.env.example
+
+# testes
+coverage/
+test-results/
+playwright-report/
+
+# tooling
+.eslintcache
+*.tsbuildinfo
+next-env.d.ts
+
+# sistema operacional
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# artefatos de inspecao com Playwright
+.playwright-mcp/
+# Só na raiz: public/ vai receber logo, favicon e og-image de verdade.
+/*.png

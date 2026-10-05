@@ -1,0 +1,283 @@
+@import "tailwindcss";
+
+/*
+ * FONTE ÚNICA DE VERDADE VISUAL (junto do manual da marca).
+ * Todo valor aqui vem de docs/geral/05-marca.md e do manual da marca
+ * (docs/geral/marca/apura-manual-da-marca.pdf) — identidade "Petróleo + Laranja Apura".
+ *
+ * Este é o ÚNICO arquivo do projeto autorizado a conter hex de cor.
+ * scripts/check-tokens.mjs falha o build se um #RRGGBB aparecer em outro lugar.
+ */
+
+@theme {
+  /* ---------------------------------------------------------------
+   * Zera a paleta default do Tailwind. Sem isso, bg-blue-500 e
+   * text-gray-400 continuam existindo e a paleta de marca vira
+   * sugestão em vez de regra.
+   * --------------------------------------------------------------- */
+  --color-*: initial;
+
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Paleta de marca — manual da marca, pág. 05-Cores
+   * Proporção de uso: 60% Base/Branco · 25% Petróleo · 10% Anel · 5% Laranja.
+   * Laranja claro substitui o Laranja Apura sobre fundos escuros. */
+  --color-petroleo: #0f3b45;
+  --color-laranja: #d96b1a;
+  --color-laranja-claro: #f08a3c;
+  --color-anel: #d6e1e0;
+  --color-base: #eceeec;
+
+  /* Derivados de interface, não presentes literalmente no manual:
+   * - petroleo-suave serve de texto secundário (o manual só define a
+   *   cor cheia; um cinza puro brigaría com o tom).
+   * - laranja-hover escurece o Laranja Apura para o estado de hover de
+   *   botão — o manual não define interação, e escurecer é o padrão
+   *   esperado de feedback. */
+  --color-petroleo-suave: #5e7980;
+  --color-laranja-hover: #b2530f;
+
+  /* Tokens de interface — derivados da paleta, não escolhidos ao acaso */
+  --color-surface: #ffffff;
+  --color-surface-alt: #eceeec;
+  --color-border: #d6e1e0;
+  --color-text: #0f3b45;
+  --color-text-muted: #5e7980;
+  --color-text-inverse: #ffffff;
+  --color-primary: #d96b1a;
+  --color-primary-hover: #b2530f;
+
+  /* Semânticas — mantidas da identidade anterior (decisão do rebrand:
+   * erro ≠ cor de marca, e o Laranja Apura agora É a cor de destaque,
+   * então danger não pode laranja).
+   *
+   * REGRA DO DANGER (05-marca.md), revisada na Leva 4.1: nunca usar
+   * `--color-primary` fora de botão. Para sinalizar que um valor do
+   * PRÓPRIO custo/margem da oficina piorou (custo subiu, margem caiu),
+   * usar `--color-danger` — distinto da cor de marca, nunca o mesmo
+   * token do CTA — sempre com seta/ícone e rótulo textual, nunca cor
+   * sozinha. `--color-success` cobre o caso "melhorou". Não vale para
+   * posição de mercado (`/benchmark`): isso é fato de posicionamento,
+   * não avaliação de bom/ruim — ver docs/saas/09-benchmark.md. */
+  --color-success: #2e7d5b;
+  --color-warning: #c98a1e;
+  --color-danger: #c63122;
+  --color-info: #3b6e8f;
+
+  /* Tipografia. As famílias vêm de next/font em src/app/layout.tsx.
+   * display  = Archivo Expanded (wdth 118, 800) — SÓ título de página,
+   *            marca e número-herói. Nunca em texto longo nem abaixo de 20px.
+   * sans     = Barlow (400/600/700) — interface, corpo e números. */
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+  /* Números tabulares saem da família Barlow: o manual pede "valores
+   * sempre com números tabulares" e não define fonte mono. */
+  --font-tabular: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+
+  /* Escala de tipo — máximo 3 tamanhos por tela */
+  --text-xs: 12px;
+  --text-xs--line-height: 1.4;
+  /* 15px, não 14: este é o tamanho do texto de AJUDA e do assistente,
+   * lido por alguém de 35 a 55 anos, em pé, num celular, muitas vezes
+   * sob luz de galpão. Ajuda ilegível não ajuda. */
+  --text-sm: 15px;
+  --text-sm--line-height: 1.55;
+  --text-base: 16px;
+  --text-base--line-height: 1.6;
+  --text-lg: 20px;
+  --text-lg--line-height: 1.4;
+  --text-xl: 24px;
+  --text-xl--line-height: 1.3;
+  --text-2xl: 32px;
+  --text-2xl--line-height: 1.2;
+  --text-4xl: 48px;
+  --text-4xl--line-height: 1.1;
+
+  /* Raio — moderado; o manual não prescreve raio e o caráter técnico
+   * da Archivo Expanded pede cantos contidos */
+  --radius-button: 8px;
+  /* 14px em vez de 10: o suficiente para a tela parar de parecer
+   * formulário de sistema, longe do arredondado de aplicativo de
+   * consumo. "Técnico mas acessível" (05-marca.md). */
+  --radius-card: 14px;
+
+  /* A ÚNICA sombra permitida. O manual proíbe sombra no logo;
+   * o espírito se estende à interface. */
+  /* Difusa e rasa: separa o cartão do fundo sem virar relevo. */
+  --shadow-card: 0 1px 3px rgb(15 59 69 / 0.05), 0 1px 2px rgb(15 59 69 / 0.03);
+
+  /* Alvo de toque mínimo. Não negociável: o usuário está de mão
+   * suja, em pé, no balcão. */
+  --spacing-touch: 44px;
+}
+
+/*
+ * Expande a Archivo em todo uso de display sem tocar nos arquivos que
+ * usam `font-display`. O manual define Expanded (largura 118%) e o
+ * next/font expõe o eixo wdth, mas aplicá-lo por classe em 25 arquivos
+ * esqueceria algum.
+ */
+@utility font-display {
+  font-family: var(--font-display);
+  font-stretch: 118%;
+}
+
+/*
+ * A escala de espaçamento default do Tailwind v4 (--spacing: 0.25rem)
+ * já produz exatamente a escala base-4 de 05-marca.md:
+ * p-1=4 p-2=8 p-3=12 p-4=16 p-6=24 p-8=32 p-12=48 p-16=64 p-20=80.
+ * Por isso não há override aqui.
+ */
+
+@layer base {
+  html {
+    /* pt-BR: o atributo lang vive em layout.tsx */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-surface-alt);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.6;
+  }
+
+  /* Foco de teclado sempre visível — 2px, offset 2px */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* Números de custo em coluna precisam de largura tabular para alinhar.
+   * É uma ferramenta de cálculo. A família sai de --font-tabular
+   * (Barlow — o manual não define mono). */
+  .tabular {
+    font-family: var(--font-tabular);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* Garante o alvo de 44px sem repetir min-h/min-w em cada componente */
+  .touch-target {
+    min-height: var(--spacing-touch);
+    min-width: var(--spacing-touch);
+  }
+
+  /*
+   * ═══ CARTÃO DE MÉTRICA ═══
+   * Estrutura vinda do protótipo Lovable, repintada com os tokens de
+   * 05-marca.md — a paleta laranja/azul dele não é a marca.
+   *
+   * Uma sombra só (--shadow-card): o manual proíbe sombra no logo e o
+   * espírito se estende à interface. Nada de hover que levanta o card.
+   */
+  .card-metric {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 1.25rem;
+  }
+
+  /*
+   * Valor numérico de métrica secundária. Tabular porque é ferramenta
+   * de cálculo e os números aparecem em coluna.
+   *
+   * O número-herói (custo real da unidade) NÃO usa esta classe: ele é
+   * Archivo Expanded 48px, porque o manual reserva a display para
+   * título de página e número-herói, e nada mais.
+   */
+  .metric-value {
+    font-family: var(--font-tabular);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--text-xl);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .metric-label {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  /*
+   * ═══ PASSO DO MODO GUIADO ═══
+   * Três estados: atual, concluído, pendente.
+   *
+   * O indicador visual tem 32px, mas quando for clicável precisa vir
+   * dentro de um alvo de 44px (`.touch-target`) — o usuário está em pé,
+   * no balcão, com a mão suja.
+   *
+   * Estado NUNCA por cor sozinha: concluído carrega um símbolo, e o
+   * atual é anunciado por aria-current. Requisito de acessibilidade e
+   * a mesma regra que vale para prejuízo em 05-marca.md.
+   */
+  .step-indicator {
+    align-items: center;
+    border: 1.5px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-text-muted);
+    display: inline-flex;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    height: 2rem;
+    justify-content: center;
+    width: 2rem;
+  }
+
+  .step-indicator[data-estado="atual"] {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-text-inverse);
+  }
+
+  .step-indicator[data-estado="concluido"] {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  /*
+   * A transição do número quando o cálculo muda. É a parte que ENSINA
+   * — o usuário precisa ver o resultado reagir ao campo que ele mexeu
+   * (docs/geral/02-produto.md), então isto não é enfeite.
+   *
+   * Implementada com keyframe + `key` no elemento, e não com biblioteca
+   * de animação: o público está em 4G num celular mediano e 04-landing.md
+   * proíbe peso de animação. São 180ms de CSS.
+   *
+   * O bloco de prefers-reduced-motion no fim do arquivo desliga isso.
+   */
+  .valor-mudou {
+    animation: valor-mudou 180ms ease-out;
+  }
+}
+
+@keyframes valor-mudou {
+  from {
+    opacity: 0.55;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+ * prefers-reduced-motion é requisito, não polimento (05-marca.md).
+ * A animação do número é o mecanismo pedagógico do produto, então
+ * ela existe — mas desliga por completo para quem pediu.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
